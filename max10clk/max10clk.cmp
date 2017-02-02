@@ -1,0 +1,7 @@
+	component max10clk is
+		port (
+			clkout : out std_logic;        -- clk
+			oscena : in  std_logic := 'X'  -- oscena
+		);
+	end component max10clk;
+

@@ -1,0 +1,19 @@
+# system info max10clk on 2017.01.25.14:31:57
+system_info:
+name,value
+DEVICE,10M50DCF484I7G
+DEVICE_FAMILY,MAX 10
+GENERATION_ID,1485351116
+#
+#
+# Files generated for max10clk on 2017.01.25.14:31:57
+files:
+filepath,kind,attributes,module,is_top
+simulation/max10clk.v,VERILOG,,max10clk,true
+simulation/submodules/altera_int_osc.v,VERILOG,,altera_int_osc,false
+simulation/submodules/altera_int_osc.sdc,SDC,,altera_int_osc,false
+#
+# Map from instance-path to kind of module
+instances:
+instancePath,module
+max10clk.int_osc_0,altera_int_osc
