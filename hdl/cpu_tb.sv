@@ -2,12 +2,11 @@
 // Author: Rasmus Ulslev Pedersen (rup.itm@cbs.dk)
 // License: Simplified BSD License
 //
-// Garbage Collection Module
+// gcl-a.
 
 `timescale 1 ns / 100 ps
 module cpu_tb;
-	parameter A_size  = 18;
-	parameter DQ_size = 9;
+   import gcltypes::*;
 
    // clock and reset
    logic     CLK_tb     = 1;
@@ -44,7 +43,14 @@ module cpu_tb;
    logic LED2;                  // m10 pad A20
    logic JMP1N;                 // JMP1 "north" on pad B22
    logic JMP1S;                 // JMP1 "south" on pad C22
-   
+
+   gclop_t gclop_tb;            // gcl command from control to module
+
+   gclctrl_m gclctrl(
+      .clk(CLK_tb),
+      .reset_n(reset_n_tb),
+      .gclop_out(gclop_tb));
+
    // GCL II for synthesis
    gcla_m gcla(
       .clk(CLK_tb), 
@@ -75,7 +81,8 @@ module cpu_tb;
       .LED1(LED1),
       .LED2(LED2),
       .JMP1N(JMP1N),
-      .JMP1S(JMP1S));
+      .JMP1S(JMP1S),
+      .gclop_in(gclop_tb));
 
    // IS61NLP25636B ISSI SRAM models for simulation
    issiram_m issiA(.A(A_tbA), .DQa(DQa_tbAB), .DQb(DQb_tbAB), .DQc(DQc_tbAB), .DQd(DQd_tbAB), 

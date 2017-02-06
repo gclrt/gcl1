@@ -122,6 +122,13 @@ module issiram_m(A, DQa, DQb, DQc, DQd, BWa_n, BWb_n, BWc_n, BWd_n, CLK, CKE_n,
                          bank1 [0:bank_size] = '{default:0},
                          bank2 [0:bank_size] = '{default:0},
                          bank3 [0:bank_size] = '{default:0};
+
+   // test vectors to verify gc process
+   initial begin 
+      for (int unsigned index = 0; index < bank_size; index++) begin
+         {bank3[index],bank2[index],bank1[index],bank0[index]} = index; // initialize memory word
+      end
+   end 
 //---------------------------------------------------------------
 //      Valid Sync Sram Operatons  - 3 configuration pins 
 //---------------------------------------------------------------
