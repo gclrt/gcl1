@@ -1,9 +1,4 @@
-// Copyright: 2017, Copenhagen Business School, Dept. IT Mgt.
-// Author: Rasmus Ulslev Pedersen (rup.itm@cbs.dk)
-// License: Simplified BSD License
-//
-// gcl-a.
-
+//gcl-a-i
 `timescale 1 ns / 100 ps
 
 // sends commands to the gcla_m module based on the object reference table
@@ -15,16 +10,41 @@ import gcltypes::*;
    output gclop_t gclop_out
 );
 
+  // Test setup (choose a set from JAVA, CLOSURE, JRUBY, or JYTHON)
+   parameter NUMOBJ = 200 * 1000; // 
+   // Average nusery survival for 7 benchmarks
+   parameter NUMBENCHMARKS = 7.0;
+   parameter SEMISIZE = 2**A_size; // gcl 1 has one RAM pr semispace
+   
+   // parameter NUSERY_CUT = ... `include ...
+   // Size distribution
+   // integer unsigned objsize[][2] = ... `include ...
+   
+   // Include one at a time and run ...
+
+   // JAVA ...
+   //`include "BenchmarkJava.sv"
+   
+   // CLOSURE ...
+   `include "BenchmarkClosure.sv"
+
+   // JYTHON ...
+   //`include "BenchmarkJython.sv"
+
+   // JRUBY ...
+   //`include "BenchmarkJRuby.sv"
+
    // object reference 
    typedef struct {
       integer unsigned       oid;     // object identifiers
-      logic [A_size-1:0]     adr;     // start adr. in current semispace
-      logic [A_size-1:0]    size;     // size in words
+      logic [A_size:0]     adr;     // start adr. in current semispace
+      logic [A_size:0]    size;     // size in words
       logic                  mrk;     // alive/not alive
    } objref_t;
 
+
    // object reference table (see initObjHandles)
-   objref_t objref[1024];
+   objref_t objref[NUMOBJ];
 
    integer unsigned   curoid; // current object id
    logic [A_size-1:0] offset; // offset in current copy operation
@@ -42,9 +62,12 @@ import gcltypes::*;
          delta     <= 0;
       end
       else begin 
-         $display("gclctrl_m time %0d", $time); 
-         if (curoid > 2) 
-            nopTask();
+         //$display("gclctrl_m time %0d", $time); 
+         if (objref[curoid].adr > SEMISIZE) begin   //curoid == NUMOBJ) begin
+	            nopTask();
+               $display("[time=%0d] Done: objref[curoid=%0d].adr = %0d(hex %0h)", $time, curoid, objref[curoid].adr, objref[curoid].adr, objref[curoid].adr); 
+	            $stop;
+	      end
          else begin
 	         if (objref[curoid].mrk) begin
 	            processObj(curoid, offset, dest);
@@ -80,11 +103,26 @@ import gcltypes::*;
    task nopTask();
       gclop_out <= '{id:'hf, 	cmd:NOP, 	adr1:'z, 	adr2:'z, 	data:'z, 	datachk:'z};
    endtask
-
+   
+   integer unsigned bench;
+   integer unsigned benchsize;
+   integer unsigned adroffset;
+   integer unsigned mark;
    task initObjHandles();
-      objref[0] <=#1 '{oid:'h0, 	adr:'h0, 	size:'h2, 	mrk:1'b1};
-      objref[1] <=#1 '{oid:'h1, 	adr:'h2, 	size:'h4, 	mrk:1'b0};
-      objref[2] <=#1 '{oid:'h2, 	adr:'h6, 	size:'h6, 	mrk:1'b1};
+      adroffset = 0;
+      $display("Heap seed %0d", $urandom(1));
+      // $size(objsize,1) gives 1st dim $size(objsize[1stdim],1) gives size of second dim
+      for (int unsigned index = 0; index < NUMOBJ; index++) begin
+         bench = $urandom_range($size(objsize,1)-1,0);
+         benchsize = objsize[bench][$urandom_range($size(objsize[bench],1)-1, 0)]/4;
+         if ($random < NUSERY_CUT)
+            mark = 1;
+         else 
+            mark = 0;
+         objref[index] <=#1 '{oid:index, 	adr:adroffset, 	size:benchsize, 	mrk:mark};
+         adroffset = adroffset + benchsize;
+         $display("adroffset %0d", adroffset);
+      end
    endtask
 
    //gcl command queue (for unit testing)

@@ -1,16 +1,10 @@
-// Copyright: 2017, Copenhagen Business School, Dept. IT Mgt.
-// Author: Rasmus Ulslev Pedersen (rup.itm@cbs.dk)
-// License: Simplified BSD License
-//
-// gcl-a.
-
 `timescale 1 ns / 100 ps
 module cpu_tb;
    import gcltypes::*;
 
    // clock and reset
    logic     CLK_tb     = 1;
-   always #5 CLK_tb     = ~CLK_tb;
+   always #2.5 CLK_tb     = ~CLK_tb;
    logic     reset_n_tb = 0;
 
    logic [A_size-1:0] A_tbA;    // address
@@ -101,7 +95,8 @@ module cpu_tb;
 			reset_n_tb <=#1 1;
       end
       else begin
-         //$display("cpu time %0d", $time); 
+         $display("cpu time %0d", $time);
+         
       end
    end
 

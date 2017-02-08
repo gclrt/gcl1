@@ -1,9 +1,4 @@
-// Copyright: 2017, Copenhagen Business School, Dept. IT Mgt.
-// Author: Rasmus Ulslev Pedersen (rup.itm@cbs.dk)
-// License: Simplified BSD License
-//
-// gcl-a.
-
+//gcl-a-ii
 `timescale 1 ns / 100 ps
 // GCL II for synthesis
 // A queue of test vectors is defined and brought through the GCL
@@ -15,8 +10,8 @@
    module gcla_m 
    import gcltypes::*;    
 	#(
-   parameter ATop      = 18'h3ffff, // using this as dummy read NOP address
-	parameter bank_size = 262144,
+    parameter ATop      = 18'h3ffff, // using this as dummy read NOP address
+	parameter bank_size = 2**A_size,
 	parameter HighZ     = 9'b ZZZZZZZZZ
    ) (
    input clk, 
@@ -93,7 +88,7 @@
          initGclStages();
       end
       else begin 
-         $display("gcla_m time %0d", $time); 
+         //$display("gcla_m time %0d", $time); 
          stage0(); // setup WR/RD, address
 			stage1(); // wait
 			stage2(); // setup OE (and data on WR)
@@ -109,8 +104,8 @@
    
    // stage0: setup sram read/write enable and sram address
    task stage0();
-      $display("gcl stage0: id=%0d cmd=%4s adr1=%0h adr2=%0h data=%0h datachk=%0h", 
-                gclop_in.id, gname(gclop_in.cmd), gclop_in.adr1, gclop_in.adr2, gclop_in.data, gclop_in.datachk);
+      //$display("gcl stage0: id=%0d cmd=%4s adr1=%0h adr2=%0h data=%0h datachk=%0h", 
+      //         gclop_in.id, gname(gclop_in.cmd), gclop_in.adr1, gclop_in.adr2, gclop_in.data, gclop_in.datachk);
 		case (gclop_in.cmd)    
 			RDA: 	begin
          		  	A_A    <=#1 gclop_in.adr1;
@@ -160,12 +155,12 @@
    
    // stage1: wait stage (see IS61NLP25636B datasheet)
    task stage1();
-      $display("gcl stage1: cmd = %4s id = %0d", gname(gclop[1].cmd), gclop[1].id);
+      //$display("gcl stage1: cmd = %4s id = %0d", gname(gclop[1].cmd), gclop[1].id);
    endtask
 
    // stage2: setup data bus and sram OE 
    task stage2();
-      $display("gcl stage2: cmd = %4s id = %0d", gname(gclop[2].cmd), gclop[2].id);
+      //$display("gcl stage2: cmd = %4s id = %0d", gname(gclop[2].cmd), gclop[2].id);
       if (gclop[2].cmd == RDA) begin
          wr_data_bus <=#1 0;
          data_out    <=#1 'z;
@@ -208,23 +203,23 @@
 	
    // stage3: register read from data bus (also on copy)
    task stage3();
-      $display("gcl stage3: cmd = %4s id = %0d", gname(gclop[3].cmd), gclop[3].id);
+      //$display("gcl stage3: cmd = %4s id = %0d", gname(gclop[3].cmd), gclop[3].id);
       if(gclop[3].cmd == RDA || gclop[3].cmd == RDB || gclop[3].cmd == CPAB || gclop[3].cmd == CPBA) begin
 			data_in <=#1 {DQa_AB, DQb_AB, DQc_AB, DQd_AB};
          // assert test data
       	if(gclop[3].datachk != {DQa_AB, DQb_AB, DQc_AB, DQd_AB}) begin
-				$display("gcl stage3: %0s failed test", gname(gclop[3].cmd));
+				//$display("gcl stage3: %0s failed test", gname(gclop[3].cmd));
             LED1 <=#1 1;
             LED2 <=#1 0;
          end
          else begin
-				$display("gcl stage3: %0s passed test", gname(gclop[3].cmd));
+				//$display("gcl stage3: %0s passed test", gname(gclop[3].cmd));
             LED1 <=#1 0;
             LED2 <=#1 1;
          end
 		end
       else begin 
-			$display("gcl stage3: %0s no test", gname(gclop[3].cmd));
+			//$display("gcl stage3: %0s no test", gname(gclop[3].cmd));
          LED1 <=#1 1;
          LED2 <=#1 1;
 		end

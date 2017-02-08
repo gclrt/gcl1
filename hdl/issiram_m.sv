@@ -70,16 +70,19 @@
 /// ZZ is input    LOW =>no sleep
 /// FT_n is input  HIGH=>pipeline
 /// Mode is input: LOW =>linear addr 
-module issiram_m(A, DQa, DQb, DQc, DQd, BWa_n, BWb_n, BWc_n, BWd_n, CLK, CKE_n, 
-               WE_n, CE_n, CE2, CE2_n, OE_n, ADV, ZZ, FT_n, MODE);
+module issiram_m
+import gcltypes::*; 
+(A, DQa, DQb, DQc, DQd, BWa_n, BWb_n, BWc_n, BWd_n, CLK, CKE_n, 
+WE_n, CE_n, CE2, CE2_n, OE_n, ADV, ZZ, FT_n, MODE);
                      
    parameter ramtype         = 2,            // 1 burst, 2 NBT, 3 sigma
              ramversion      = 0,            // 0, 1, 2
              density         = 4,            // 4M bit sram
              byteparl        = 4,            // 4 bytes
-             A_size          = 18,           // address
-             DQ_size         = 9,            // DQ size
-             bank_size       = 262144,       // bank size of each DQ
+             //A_size          = 18,           // address
+             //DQ_size         = 9,            // DQ size
+             //bank_size       = 262144,       // bank size of each DQ
+             bank_size       = 2**A_size,       // bank size of each DQ
              HighZ           = 9'b ZZZZZZZZZ;
 
    input [A_size-1:0]  A;          // address

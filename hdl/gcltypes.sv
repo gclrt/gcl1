@@ -1,12 +1,7 @@
-// Copyright: 2017, Copenhagen Business School, Dept. IT Mgt.
-// Author: Rasmus Ulslev Pedersen (rup.itm@cbs.dk)
-// License: Simplified BSD License
-//
-// gcl-a.
-
+// gcl-a-ii
 package gcltypes;
 
-	parameter A_size  = 18;
+	parameter A_size  = 20;//18;
 	parameter DQ_size = 9;
 
 	// gcl commands. 
@@ -21,7 +16,7 @@ package gcltypes;
       logic [A_size-1:0]    adr1;     // RD, WR, CP
       logic [A_size-1:0]    adr2;     // CP
       logic [4*DQ_size-1:0] data;     // WR, stage 0 or RD, stage 3
-      reg [4*DQ_size-1:0] datachk;    // used for assert verify a read or copy
+      logic [4*DQ_size-1:0] datachk;    // used for assert verify a read or copy
    } gclop_t;
 
 endpackage
